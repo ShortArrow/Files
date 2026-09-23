@@ -19,8 +19,19 @@ namespace Files.App.UserControls.TabBar
 		public IconSource? IconSource
 		{
 			get => _IconSource;
-			set => SetProperty(ref _IconSource, value);
+			set
+			{
+				if (SetProperty(ref _IconSource, value))
+					OnPropertyChanged(nameof(Icon));
+			}
 		}
+
+		/// <summary>
+		/// Gets a fresh icon element for <see cref="IconSource"/>. Built in code because binding an
+		/// <see cref="IconSourceElement"/> to an <see cref="ImageIconSource"/> is not supported by the AOT-safe projections.
+		/// </summary>
+		public IconElement? Icon
+			=> IconSource?.CreateIconElement();
 
 		private string? _Header;
 		public string? Header

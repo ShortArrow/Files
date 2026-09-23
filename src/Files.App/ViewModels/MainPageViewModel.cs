@@ -46,6 +46,21 @@ namespace Files.App.ViewModels
 
 		public ITabBar? MultitaskingControl { get; set; }
 
+		private bool _canLoadTabBars;
+
+		/// <summary>
+		/// Gets a value indicating whether the horizontal tab bar is loaded.
+		/// No tab bar loads before <see cref="EnableTabBarLoading"/> is called, to keep startup fast.
+		/// </summary>
+		public bool ShowHorizontalTabBar
+			=> _canLoadTabBars && !AppearanceSettingsService.UseVerticalTabs;
+
+		/// <summary>
+		/// Gets a value indicating whether the vertical tab bar is loaded.
+		/// </summary>
+		public bool ShowVerticalTabBar
+			=> _canLoadTabBars && AppearanceSettingsService.UseVerticalTabs;
+
 		private bool _IsSidebarPaneOpen;
 		public bool IsSidebarPaneOpen
 		{
@@ -125,6 +140,18 @@ namespace Files.App.ViewModels
 			context.PageType is not ContentPageTypes.Settings;
 
 		private bool canShowPrompts;
+
+		public void EnableTabBarLoading()
+		{
+			_canLoadTabBars = true;
+			NotifyTabBarLayoutChanged();
+		}
+
+		private void NotifyTabBarLayoutChanged()
+		{
+			OnPropertyChanged(nameof(ShowHorizontalTabBar));
+			OnPropertyChanged(nameof(ShowVerticalTabBar));
+		}
 
 		public void OnPageLoaded()
 		{
@@ -207,6 +234,9 @@ namespace Files.App.ViewModels
 						break;
 					case nameof(AppearanceSettingsService.AppThemeBackgroundImageHorizontalAlignment):
 						OnPropertyChanged(nameof(AppThemeBackgroundImageHorizontalAlignment));
+						break;
+					case nameof(AppearanceSettingsService.UseVerticalTabs):
+						NotifyTabBarLayoutChanged();
 						break;
 					case nameof(AppearanceSettingsService.ShowToolbar):
 						OnPropertyChanged(nameof(ShowToolbar));

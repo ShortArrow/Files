@@ -110,6 +110,10 @@
 	</Page.KeyboardAccelerators>
 
 	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
@@ -119,6 +123,7 @@
 		<!--  Background Image  -->
 		<Image
 			Grid.RowSpan="3"
+			Grid.ColumnSpan="2"
 			HorizontalAlignment="{x:Bind ViewModel.AppThemeBackgroundImageHorizontalAlignment, Mode=OneWay}"
 			VerticalAlignment="{x:Bind ViewModel.AppThemeBackgroundImageVerticalAlignment, Mode=OneWay}"
 			Opacity="{x:Bind ViewModel.AppThemeBackgroundImageOpacity, Mode=OneWay}"
@@ -128,15 +133,36 @@
 		<!--  Tab Bar  -->
 		<tabbar:TabBar
 			x:Name="TabControl"
+			Grid.ColumnSpan="2"
 			HorizontalContentAlignment="Stretch"
-			x:Load="False"
-			Loaded="HorizontalMultitaskingControl_Loaded"
+			x:Load="{x:Bind ViewModel.ShowHorizontalTabBar, Mode=OneWay}"
+			Loaded="TabBar_Loaded"
+			TabIndex="0" />
+
+		<!--  Title bar drag strip shown instead of the horizontal tab bar; same height as the tab bar  -->
+		<Border
+			x:Name="TitleBarDragArea"
+			Grid.ColumnSpan="2"
+			Height="42"
+			x:Load="{x:Bind ViewModel.ShowVerticalTabBar, Mode=OneWay}"
+			Background="Transparent"
+			SizeChanged="TitleBarDragArea_SizeChanged" />
+
+		<!--  Vertical Tab Bar  -->
+		<tabbar:VerticalTabBar
+			x:Name="VerticalTabControl"
+			Grid.Row="1"
+			Grid.RowSpan="2"
+			x:Load="{x:Bind ViewModel.ShowVerticalTabBar, Mode=OneWay}"
+			Loaded="TabBar_Loaded"
+			PaneWidth="{x:Bind UserSettingsService.AppearanceSettingsService.VerticalTabsWidth, Mode=TwoWay}"
 			TabIndex="0" />
 
 		<!--  Address Bar  -->
 		<uc:NavigationToolbar
 			x:Name="NavToolbar"
 			Grid.Row="1"
+			Grid.Column="1"
 			HorizontalAlignment="Stretch"
 			HorizontalContentAlignment="Stretch"
 			x:Load="False"
@@ -148,6 +174,7 @@
 		<controls:SidebarView
 			x:Name="SidebarControl"
 			Grid.Row="2"
+			Grid.Column="1"
 			HorizontalAlignment="Stretch"
 			HorizontalContentAlignment="Stretch"
 			DisplayMode="{x:Bind SidebarAdaptiveViewModel.SidebarDisplayMode, Mode=TwoWay}"

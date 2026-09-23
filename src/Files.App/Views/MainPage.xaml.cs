@@ -117,24 +117,56 @@ namespace Files.App.Views
 			}
 		}
 
-		private void HorizontalMultitaskingControl_Loaded(object sender, RoutedEventArgs e)
+		private void TabBar_Loaded(object sender, RoutedEventArgs e)
 		{
-			TabControl.DragArea.SizeChanged += (_, _) => MainWindow.Instance.RaiseSetTitleBarDragRegion(SetTitleBarDragRegion);
-			TabControl.SizeChanged += (_, _) => MainWindow.Instance.RaiseSetTitleBarDragRegion(SetTitleBarDragRegion);
-			if (ViewModel.MultitaskingControl is not TabBar)
+			if (sender is TabBar horizontalTabBar)
 			{
-				ViewModel.MultitaskingControl = TabControl;
-				ViewModel.MultitaskingControls.Add(TabControl);
-				ViewModel.MultitaskingControl.CurrentInstanceChanged += MultitaskingControl_CurrentInstanceChanged;
+				horizontalTabBar.DragArea.SizeChanged += (_, _) => MainWindow.Instance.RaiseSetTitleBarDragRegion(SetTitleBarDragRegion);
+				horizontalTabBar.SizeChanged += (_, _) => MainWindow.Instance.RaiseSetTitleBarDragRegion(SetTitleBarDragRegion);
 			}
+
+			if (sender is BaseTabBar tabBar)
+				RegisterMultitaskingControl(tabBar);
+		}
+
+		// Only one tab bar is loaded at a time; the newcomer replaces the previous one as the multitasking control
+		private void RegisterMultitaskingControl(BaseTabBar tabBar)
+		{
+			if (!ReferenceEquals(ViewModel.MultitaskingControl, tabBar))
+			{
+				if (ViewModel.MultitaskingControl is { } previous)
+				{
+					previous.CurrentInstanceChanged -= MultitaskingControl_CurrentInstanceChanged;
+					ViewModel.MultitaskingControls.Remove(previous);
+				}
+
+				ViewModel.MultitaskingControl = tabBar;
+				ViewModel.MultitaskingControls.Add(tabBar);
+				tabBar.CurrentInstanceChanged += MultitaskingControl_CurrentInstanceChanged;
+			}
+
+			tabBar.SelectionChanged();
+			MainWindow.Instance.RaiseSetTitleBarDragRegion(SetTitleBarDragRegion);
+		}
+
+		private void TitleBarDragArea_SizeChanged(object sender, SizeChangedEventArgs e)
+		{
+			MainWindow.Instance.RaiseSetTitleBarDragRegion(SetTitleBarDragRegion);
 		}
 
 		private int SetTitleBarDragRegion(InputNonClientPointerSource source, SizeInt32 size, double scaleFactor, Func<UIElement, RectInt32?, RectInt32> getScaledRect)
 		{
-			var height = (int)TabControl.ActualHeight;
-			source.SetRegionRects(NonClientRegionKind.Passthrough, [getScaledRect(this, new RectInt32(0, 0, (int)(TabControl.ActualWidth + TabControl.Margin.Left - TabControl.DragArea.ActualWidth), height))]);
 			AttachTitleBarMessageMonitor();
-			return height;
+
+			if (TabControl is { IsLoaded: true } horizontalTabBar)
+			{
+				var height = (int)horizontalTabBar.ActualHeight;
+				source.SetRegionRects(NonClientRegionKind.Passthrough, [getScaledRect(this, new RectInt32(0, 0, (int)(horizontalTabBar.ActualWidth + horizontalTabBar.Margin.Left - horizontalTabBar.DragArea.ActualWidth), height))]);
+				return height;
+			}
+
+			source.SetRegionRects(NonClientRegionKind.Passthrough, []);
+			return (int)(TitleBarDragArea?.ActualHeight ?? 0);
 		}
 
 		// Caption regions live in a dedicated child window
@@ -154,7 +186,7 @@ namespace Files.App.Views
 		private void TitleBar_WindowMessageReceived(object? sender, WindowMessageEventArgs e)
 		{
 			if (e.Message.MessageId is not (PInvoke.WM_NCMBUTTONDOWN or PInvoke.WM_NCMBUTTONDBLCLK) ||
-				(int)e.Message.WParam != HTCAPTION || TabControl is null)
+				(int)e.Message.WParam != HTCAPTION || ViewModel.MultitaskingControl is null)
 				return;
 
 			// Deferred because this runs inside the window procedure
@@ -330,7 +362,7 @@ namespace Files.App.Views
 
 			// Defers loading until after the page has loaded to improve startup perf
 			FindName(nameof(InnerNavigationToolbar));
-			FindName(nameof(TabControl));
+			ViewModel.EnableTabBarLoading();
 			FindName(nameof(NavToolbar));
 
 			// Notify user that drag and drop is disabled

@@ -1,0 +1,161 @@
+﻿<!--  Copyright (c) Files Community. Licensed under the MIT License.  -->
+<local:BaseTabBar
+	x:Class="Files.App.UserControls.TabBar.VerticalTabBar"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:controls="using:Files.App.Controls"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:helpers="using:Files.App.Helpers"
+	xmlns:local="using:Files.App.UserControls.TabBar"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:root="using:Files.App"
+	xmlns:wctconverters="using:CommunityToolkit.WinUI.Converters"
+	mc:Ignorable="d">
+
+	<local:BaseTabBar.Resources>
+		<wctconverters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+	</local:BaseTabBar.Resources>
+
+	<Grid Background="{ThemeResource App.Theme.Sidebar.BackgroundBrush}">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition x:Name="PaneColumn" Width="220" />
+			<ColumnDefinition Width="4" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+
+		<!--  Header  -->
+		<Grid Margin="8,8,8,4" ColumnSpacing="4">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+
+			<!--  Tab actions  -->
+			<Button
+				Width="30"
+				Height="30"
+				Padding="0"
+				AutomationProperties.Name="{helpers:ResourceString Name=TabActions}"
+				Background="Transparent"
+				BorderThickness="0"
+				Flyout="{x:Bind local:TabBarFlyouts.TabActionsFlyout}"
+				ToolTipService.ToolTip="{helpers:ResourceString Name=TabActions}"
+				Visibility="{x:Bind ShowTabActionsButton, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}">
+				<controls:ThemedIcon
+					Width="16"
+					Height="16"
+					Style="{StaticResource App.ThemedIcons.Panes.Single}" />
+			</Button>
+
+			<!--  New tab  -->
+			<Button
+				Grid.Column="1"
+				Height="30"
+				Padding="8"
+				HorizontalAlignment="Stretch"
+				AutomationProperties.Name="{x:Bind Commands.NewTab.AutomationName}"
+				Background="Transparent"
+				BorderThickness="0"
+				Command="{x:Bind Commands.NewTab}"
+				ToolTipService.ToolTip="{x:Bind Commands.NewTab.LabelWithHotKey, Mode=OneWay}">
+				<FontIcon FontSize="12" Glyph="&#xE710;" />
+			</Button>
+		</Grid>
+
+		<!--  Tabs  -->
+		<ListView
+			x:Name="TabsList"
+			Grid.Row="1"
+			Padding="4,0,4,8"
+			AllowDrop="{x:Bind AllowTabsDrag, Mode=OneWay}"
+			CanDragItems="{x:Bind AllowTabsDrag, Mode=OneWay}"
+			CanReorderItems="{x:Bind AllowTabsDrag, Mode=OneWay}"
+			ItemsSource="{x:Bind Items, Mode=OneWay}"
+			SelectedIndex="{x:Bind root:App.AppModel.TabStripSelectedIndex, Mode=TwoWay}"
+			SelectionChanged="TabsList_SelectionChanged"
+			SelectionMode="Single">
+			<ListView.ItemContainerStyle>
+				<Style TargetType="ListViewItem">
+					<Setter Property="HorizontalContentAlignment" Value="Stretch" />
+					<Setter Property="MinHeight" Value="32" />
+					<Setter Property="Padding" Value="8,0,4,0" />
+				</Style>
+			</ListView.ItemContainerStyle>
+			<ListView.ItemTemplate>
+				<DataTemplate x:DataType="local:TabBarItem">
+					<Grid
+						ColumnSpacing="8"
+						ContextFlyout="{x:Bind local:TabBarFlyouts.TabContextFlyout}"
+						PointerPressed="TabItem_PointerPressed"
+						ToolTipService.ToolTip="{x:Bind ToolTipText, Mode=OneWay}">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="Auto" />
+						</Grid.ColumnDefinitions>
+
+						<Viewbox
+							Width="16"
+							Height="16"
+							VerticalAlignment="Center">
+							<ContentControl Content="{x:Bind Icon, Mode=OneWay}" IsTabStop="False" />
+						</Viewbox>
+
+						<TextBlock
+							Grid.Column="1"
+							VerticalAlignment="Center"
+							Text="{x:Bind Header, Mode=OneWay}"
+							TextTrimming="CharacterEllipsis" />
+
+						<Button
+							Grid.Column="2"
+							Width="24"
+							Height="24"
+							Padding="0"
+							AutomationProperties.Name="{helpers:ResourceString Name=CloseTab}"
+							Background="Transparent"
+							BorderThickness="0"
+							Click="CloseTabButton_Click"
+							ToolTipService.ToolTip="{helpers:ResourceString Name=CloseTab}">
+							<FontIcon FontSize="12" Glyph="&#xE8BB;" />
+						</Button>
+					</Grid>
+				</DataTemplate>
+			</ListView.ItemTemplate>
+		</ListView>
+
+		<!--  Resizer  -->
+		<Border
+			x:Name="PaneResizer"
+			Grid.RowSpan="2"
+			Grid.Column="1"
+			Background="Transparent"
+			ManipulationCompleted="PaneResizer_ManipulationCompleted"
+			ManipulationDelta="PaneResizer_ManipulationDelta"
+			ManipulationMode="TranslateX"
+			ManipulationStarted="PaneResizer_ManipulationStarted"
+			PointerCanceled="PaneResizer_PointerExited"
+			PointerEntered="PaneResizer_PointerEntered"
+			PointerExited="PaneResizer_PointerExited" />
+
+		<VisualStateManager.VisualStateGroups>
+			<VisualStateGroup x:Name="ResizerStates">
+				<VisualState x:Name="ResizerNormal" />
+				<VisualState x:Name="ResizerPointerOver">
+					<VisualState.Setters>
+						<Setter Target="PaneResizer.Background" Value="{ThemeResource CardStrokeColorDefaultSolidBrush}" />
+					</VisualState.Setters>
+				</VisualState>
+				<VisualState x:Name="ResizerPressed">
+					<VisualState.Setters>
+						<Setter Target="PaneResizer.Background" Value="{ThemeResource ControlStrongStrokeColorDefaultBrush}" />
+					</VisualState.Setters>
+				</VisualState>
+			</VisualStateGroup>
+		</VisualStateManager.VisualStateGroups>
+	</Grid>
+
+</local:BaseTabBar>
