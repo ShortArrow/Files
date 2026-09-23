@@ -61,7 +61,6 @@ namespace Files.App.UserControls.TabBar
 
 		// Events
 
-		public static event EventHandler<TabBarItem?>? SelectedTabItemChanged;
 		public static event EventHandler<TabBarItem?>? TabDragStarted;
 		public static event EventHandler<TabBarItem?>? TabDragCompleted;
 
@@ -338,18 +337,6 @@ namespace Files.App.UserControls.TabBar
 			}
 
 			e.Handled = true;
-		}
-
-		[DynamicWindowsRuntimeCast(typeof(MenuFlyout))]
-		private void TabItemContextMenu_Opening(object sender, object e)
-		{
-			MenuItemMoveTabToNewWindow.IsEnabled = Items.Count > 1;
-			SelectedTabItemChanged?.Invoke(null, ((MenuFlyout)sender).Target.DataContext as TabBarItem);
-		}
-
-		private void TabItemContextMenu_Closing(object sender, object e)
-		{
-			SelectedTabItemChanged?.Invoke(null, null);
 		}
 
 		private async void TabBarAddNewTabButton_Drop(object sender, DragEventArgs e)

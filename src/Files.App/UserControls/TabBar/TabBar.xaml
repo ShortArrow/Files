@@ -17,46 +17,6 @@
 		<ResourceDictionary>
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceDictionary Source="ms-appx:///Styles/TabBarStyles.xaml" />
-				<ResourceDictionary>
-					<MenuFlyout
-						x:Key="TabFlyout"
-						x:Name="TabItemContextMenu"
-						Closing="TabItemContextMenu_Closing"
-						Opening="TabItemContextMenu_Opening">
-						<MenuFlyoutItem
-							Command="{x:Bind Commands.NewTab}"
-							KeyboardAcceleratorTextOverride="{x:Bind Commands.NewTab.HotKeyText, Mode=OneWay}"
-							Text="{x:Bind Commands.NewTab.Label}" />
-						<MenuFlyoutItem
-							Command="{x:Bind Commands.DuplicateSelectedTab}"
-							KeyboardAcceleratorTextOverride="{x:Bind Commands.DuplicateSelectedTab.HotKeyText, Mode=OneWay}"
-							Text="{x:Bind Commands.DuplicateSelectedTab.Label}" />
-						<MenuFlyoutItem
-							x:Name="MenuItemMoveTabToNewWindow"
-							Click="MoveTabToNewWindowAsync"
-							Text="{helpers:ResourceString Name=HorizontalMultitaskingControlMoveTabToNewWindow/Text}">
-							<MenuFlyoutItem.Icon>
-								<FontIcon Glyph="&#xE8A7;" />
-							</MenuFlyoutItem.Icon>
-						</MenuFlyoutItem>
-						<MenuFlyoutItem
-							Command="{x:Bind Commands.CloseTabsToTheLeftSelected}"
-							KeyboardAcceleratorTextOverride="{x:Bind Commands.CloseTabsToTheLeftSelected.HotKeyText, Mode=OneWay}"
-							Text="{x:Bind Commands.CloseTabsToTheLeftSelected.Label}" />
-						<MenuFlyoutItem
-							Command="{x:Bind Commands.CloseTabsToTheRightSelected}"
-							KeyboardAcceleratorTextOverride="{x:Bind Commands.CloseTabsToTheRightSelected.HotKeyText, Mode=OneWay}"
-							Text="{x:Bind Commands.CloseTabsToTheRightSelected.Label}" />
-						<MenuFlyoutItem
-							Command="{x:Bind Commands.CloseOtherTabsSelected}"
-							KeyboardAcceleratorTextOverride="{x:Bind Commands.CloseOtherTabsSelected.HotKeyText, Mode=OneWay}"
-							Text="{x:Bind Commands.CloseOtherTabsSelected.Label}" />
-						<MenuFlyoutItem
-							Command="{x:Bind Commands.ReopenClosedTab}"
-							KeyboardAcceleratorTextOverride="{x:Bind Commands.ReopenClosedTab.HotKeyText, Mode=OneWay}"
-							Text="{x:Bind Commands.ReopenClosedTab.Label}" />
-					</MenuFlyout>
-				</ResourceDictionary>
 			</ResourceDictionary.MergedDictionaries>
 
 			<wctconverters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
@@ -105,6 +65,7 @@
 					AutomationProperties.Name="{helpers:ResourceString Name=TabActions}"
 					Background="Transparent"
 					BorderThickness="0"
+					Flyout="{x:Bind local:TabBarFlyouts.TabActionsFlyout}"
 					ToolTipService.ToolTip="{helpers:ResourceString Name=TabActions}"
 					Visibility="{x:Bind ShowTabActionsButton, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}">
 
@@ -112,95 +73,6 @@
 						Width="16"
 						Height="16"
 						Style="{StaticResource App.ThemedIcons.Panes.Single}" />
-
-					<Button.Flyout>
-						<MenuFlyout Placement="BottomEdgeAlignedLeft">
-
-							<!--  New Window  -->
-							<uc:MenuFlyoutItemWithThemedIcon
-								x:Name="OpenNewWindowTabActionButton"
-								Command="{x:Bind Commands.NewWindow}"
-								KeyboardAcceleratorTextOverride="{x:Bind Commands.NewWindow.HotKeyText, Mode=OneWay}"
-								Text="{x:Bind Commands.NewWindow.Label}"
-								ThemedIconStyle="{x:Bind Commands.NewWindow.ThemedIconStyle}" />
-
-							<!--  Enter Compact Overlay  -->
-							<uc:MenuFlyoutItemWithThemedIcon
-								x:Name="EnterCompactOverlayTabActionButton"
-								x:Load="{x:Bind Commands.EnterCompactOverlay.IsExecutable, Mode=OneWay}"
-								Command="{x:Bind Commands.EnterCompactOverlay}"
-								Text="{x:Bind Commands.EnterCompactOverlay.Label}"
-								ThemedIconStyle="{x:Bind Commands.EnterCompactOverlay.ThemedIconStyle}" />
-
-							<!--  Exit Compact Overlay  -->
-							<uc:MenuFlyoutItemWithThemedIcon
-								x:Name="ExitCompactOverlayTabActionButton"
-								x:Load="{x:Bind Commands.ExitCompactOverlay.IsExecutable, Mode=OneWay}"
-								Command="{x:Bind Commands.ExitCompactOverlay}"
-								Text="{x:Bind Commands.ExitCompactOverlay.Label}"
-								ThemedIconStyle="{x:Bind Commands.ExitCompactOverlay.ThemedIconStyle}" />
-
-							<!--  Add Pane  -->
-							<MenuFlyoutSubItem
-								x:Name="SplitPaneMenuItem"
-								x:Load="{x:Bind Commands.SplitPaneHorizontally.IsExecutable, Mode=OneWay}"
-								Text="{helpers:ResourceString Name=SplitPane}">
-								<MenuFlyoutSubItem.Items>
-									<!--  Vertical  -->
-									<uc:MenuFlyoutItemWithThemedIcon
-										x:Name="AddVerticalPaneTabActionButton"
-										Command="{x:Bind Commands.SplitPaneVertically, Mode=OneWay}"
-										KeyboardAcceleratorTextOverride="{x:Bind Commands.SplitPaneVertically.HotKeyText, Mode=OneWay}"
-										Text="{x:Bind Commands.SplitPaneVertically.Label}"
-										ThemedIconStyle="{x:Bind Commands.SplitPaneVertically.ThemedIconStyle}" />
-
-									<!--  Horizontal  -->
-									<uc:MenuFlyoutItemWithThemedIcon
-										x:Name="SplitPaneHorizontalTabActionButton"
-										Command="{x:Bind Commands.SplitPaneHorizontally, Mode=OneWay}"
-										KeyboardAcceleratorTextOverride="{x:Bind Commands.SplitPaneHorizontally.HotKeyText, Mode=OneWay}"
-										Text="{x:Bind Commands.SplitPaneHorizontally.Label}"
-										ThemedIconStyle="{x:Bind Commands.SplitPaneHorizontally.ThemedIconStyle}" />
-								</MenuFlyoutSubItem.Items>
-							</MenuFlyoutSubItem>
-
-							<!--  Arrange Panes  -->
-							<MenuFlyoutSubItem
-								x:Name="ArrangePanesMenuItem"
-								x:Load="{x:Bind Commands.CloseActivePane.IsExecutable, Mode=OneWay}"
-								Text="{helpers:ResourceString Name=ArrangePanes}">
-								<MenuFlyoutSubItem.Items>
-									<!--  Vertical  -->
-									<uc:ToggleMenuFlyoutItemWithThemedIcon
-										x:Name="ArrangePanesVerticallyTabActionButton"
-										Command="{x:Bind Commands.ArrangePanesVertically, Mode=OneWay}"
-										IsChecked="{x:Bind Commands.ArrangePanesVertically.IsOn, Mode=OneWay}"
-										KeyboardAcceleratorTextOverride="{x:Bind Commands.ArrangePanesVertically.HotKeyText, Mode=OneWay}"
-										Text="{x:Bind Commands.ArrangePanesVertically.Label}"
-										ThemedIconStyle="{x:Bind Commands.ArrangePanesVertically.ThemedIconStyle}" />
-
-									<!--  Horizontal  -->
-									<uc:ToggleMenuFlyoutItemWithThemedIcon
-										x:Name="ArrangePanesHorizontallyTabActionButton"
-										Command="{x:Bind Commands.ArrangePanesHorizontally, Mode=OneWay}"
-										IsChecked="{x:Bind Commands.ArrangePanesHorizontally.IsOn, Mode=OneWay}"
-										KeyboardAcceleratorTextOverride="{x:Bind Commands.ArrangePanesHorizontally.HotKeyText, Mode=OneWay}"
-										Text="{x:Bind Commands.ArrangePanesHorizontally.Label}"
-										ThemedIconStyle="{x:Bind Commands.ArrangePanesHorizontally.ThemedIconStyle}" />
-								</MenuFlyoutSubItem.Items>
-							</MenuFlyoutSubItem>
-
-							<!--  Close Active Pane  -->
-							<uc:MenuFlyoutItemWithThemedIcon
-								x:Name="CloseActivePaneTabActionButton"
-								x:Load="{x:Bind Commands.CloseActivePane.IsExecutable, Mode=OneWay}"
-								Command="{x:Bind Commands.CloseActivePane}"
-								KeyboardAcceleratorTextOverride="{x:Bind Commands.CloseActivePane.HotKeyText, Mode=OneWay}"
-								Text="{x:Bind Commands.CloseActivePane.Label}"
-								ThemedIconStyle="{x:Bind Commands.CloseActivePane.ThemedIconStyle}" />
-
-						</MenuFlyout>
-					</Button.Flyout>
 
 				</Button>
 			</TabView.TabStripHeader>
@@ -210,7 +82,7 @@
 				<DataTemplate x:DataType="local:TabBarItem">
 					<TabViewItem
 						AllowDrop="{x:Bind AllowStorageItemDrop, Mode=OneWay}"
-						ContextFlyout="{StaticResource TabFlyout}"
+						ContextFlyout="{x:Bind local:TabBarFlyouts.TabContextFlyout}"
 						DragEnter="TabViewItem_DragEnter"
 						DragLeave="TabViewItem_DragLeave"
 						Drop="TabViewItem_Drop"

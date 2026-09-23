@@ -32,7 +32,7 @@ namespace Files.App.Data.Contexts
 			MainPageViewModel.AppInstances.CollectionChanged += AppInstances_CollectionChanged;
 			App.AppModel.PropertyChanged += AppModel_PropertyChanged;
 			BaseTabBar.OnLoaded += BaseMultitaskingControl_OnLoaded;
-			TabBar.SelectedTabItemChanged += HorizontalMultitaskingControl_SelectedTabItemChanged;
+			TabBarFlyouts.SelectedTabItemChanged += HorizontalMultitaskingControl_SelectedTabItemChanged;
 
 			// FocusManager is UI-thread-only; defer if constructed during the off-thread prewarm
 			if (App.UiDispatcher?.HasThreadAccess ?? true)

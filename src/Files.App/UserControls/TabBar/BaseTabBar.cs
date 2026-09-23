@@ -138,14 +138,6 @@ namespace Files.App.UserControls.TabBar
 			}
 		}
 
-		public async void MoveTabToNewWindowAsync(object sender, RoutedEventArgs e)
-		{
-			if (sender is not FrameworkElement { DataContext: TabBarItem tabItem })
-				return;
-
-			await MultitaskingTabsHelpers.MoveTabToNewWindow(tabItem, this);
-		}
-
 		[DynamicWindowsRuntimeCast(typeof(Frame))]
 		public void CloseTab(TabBarItem? tabItem)
 		{
