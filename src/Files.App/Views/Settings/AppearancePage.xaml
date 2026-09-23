@@ -250,6 +250,17 @@
 					IsOn="{x:Bind ViewModel.ShowTabActions, Mode=TwoWay}" />
 			</wctcontrols:SettingsCard>
 
+			<!--  Use vertical tabs  -->
+			<wctcontrols:SettingsCard Header="{helpers:ResourceString Name=UseVerticalTabs}">
+				<wctcontrols:SettingsCard.HeaderIcon>
+					<FontIcon Glyph="&#xE90C;" />
+				</wctcontrols:SettingsCard.HeaderIcon>
+				<ToggleSwitch
+					AutomationProperties.AutomationControlType="Custom"
+					AutomationProperties.Name="{helpers:ResourceString Name=UseVerticalTabs}"
+					IsOn="{x:Bind ViewModel.UseVerticalTabs, Mode=TwoWay}" />
+			</wctcontrols:SettingsCard>
+
 			<!--  Toolbar  -->
 			<wctcontrols:SettingsExpander Header="{helpers:ResourceString Name=AddressBar}">
 				<wctcontrols:SettingsExpander.HeaderIcon>

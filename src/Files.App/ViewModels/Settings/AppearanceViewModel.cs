@@ -392,6 +392,20 @@ namespace Files.App.ViewModels.Settings
 			}
 		}
 
+		public bool UseVerticalTabs
+		{
+			get => UserSettingsService.AppearanceSettingsService.UseVerticalTabs;
+			set
+			{
+				if (value != UserSettingsService.AppearanceSettingsService.UseVerticalTabs)
+				{
+					UserSettingsService.AppearanceSettingsService.UseVerticalTabs = value;
+
+					OnPropertyChanged();
+				}
+			}
+		}
+
 		public bool ShowShelfPaneToggleButton
 		{
 			get => UserSettingsService.AppearanceSettingsService.ShowShelfPaneToggleButton;

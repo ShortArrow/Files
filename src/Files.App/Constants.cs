@@ -76,6 +76,15 @@ namespace Files.App
 
 			public const double MaximumSidebarWidth = 500;
 
+			/// <summary>
+			/// The width of the vertical tab pane when no width has been saved
+			/// </summary>
+			public const double DefaultVerticalTabsWidth = 220d;
+
+			public const double MinimumVerticalTabsWidth = 180d;
+
+			public const double MaximumVerticalTabsWidth = 500d;
+
 			public const double MultiplePaneWidthThreshold = 750;
 
 			/// <summary>

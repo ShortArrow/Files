@@ -20,6 +20,18 @@ namespace Files.App.Services.Settings
 			set => Set(value);
 		}
 
+		public double VerticalTabsWidth
+		{
+			get => Math.Clamp(Get(Constants.UI.DefaultVerticalTabsWidth), Constants.UI.MinimumVerticalTabsWidth, Constants.UI.MaximumVerticalTabsWidth);
+			set => Set(value);
+		}
+
+		public bool UseVerticalTabs
+		{
+			get => Get(false);
+			set => Set(value);
+		}
+
 		public bool IsSidebarOpen
 		{
 			get => Get(true);

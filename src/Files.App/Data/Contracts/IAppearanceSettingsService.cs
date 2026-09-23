@@ -16,6 +16,11 @@ namespace Files.App.Data.Contracts
 		double SidebarWidth { get; set; }
 
 		/// <summary>
+		/// Gets or sets a value indicating the width of the vertical tab pane.
+		/// </summary>
+		double VerticalTabsWidth { get; set; }
+
+		/// <summary>
 		/// Gets or sets a value indicating if the sidebar pane should be open or closed.
 		/// </summary>
 		bool IsSidebarOpen { get; set; }
@@ -111,6 +116,11 @@ namespace Files.App.Data.Contracts
 		/// Gets or sets a value whether the tab actions button should be displayed.
 		/// </summary>
 		bool ShowTabActions { get; set; }
+
+		/// <summary>
+		/// Gets or sets a value indicating whether tabs are listed in a vertical pane instead of the title bar.
+		/// </summary>
+		bool UseVerticalTabs { get; set; }
 
 		/// <summary>
 		/// Gets or sets a value whether the shelf pane toggle button should be displayed.
